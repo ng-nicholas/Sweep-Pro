@@ -26,6 +26,9 @@
 #define SPEED_SCROLL 1
 #define SPEED_PREV 0
 #define SPEED_NEXT 1
+#define CIRQUE_MODE_RELATIVE 0
+#define CIRQUE_MODE_ABSOLUTE 1
+#define CIRQUE_MODE_TOGGLE 2
 
 
 &sensors {
@@ -43,7 +46,7 @@
 
 / {
 	pointer_processor: pointer_processor {
-		compatible = "zmk,input-processor-sniping";
+		compatible = "zmk,input-processor-pointer-speed";
 		#input-processor-cells = <2>;
 		track-remainders;
 		pointer-curve = "adaptive";
@@ -71,6 +74,11 @@
 		ptr_spd: pointing_speed {
 			compatible = "zmk,behavior-pointing-speed";
 			#binding-cells = <2>;
+		};
+
+		crq_mode: crqm {
+			compatible = "zmk,behavior-cirque-mode";
+			#binding-cells = <1>;
 		};
 		
 		ds_z: drag_scroll_z {
@@ -188,7 +196,7 @@
 			bindings = <
 			&tog MOUSE  &mkp MB4  &mkp MCLK  &mkp MB5   &trans      &msc SCRL_LEFT     &msc SCRL_DOWN    &msc SCRL_UP     &msc SCRL_RIGHT    &tog MOUSE
 			&trans      &trans    &trans     &trans     &trans      &mmv MOVE_LEFT     &mmv MOVE_DOWN    &mmv MOVE_UP     &mmv MOVE_RIGHT    &trans
-			&ptr_spd SPEED_POINTER SPEED_PREV  &ptr_spd SPEED_POINTER SPEED_NEXT  &ptr_spd SPEED_SCROLL SPEED_PREV  &ptr_spd SPEED_SCROLL SPEED_NEXT  &trans      &trans     &mkp MB4  &mkp MCLK  &mkp MB5  &trans
+			&ptr_spd SPEED_POINTER SPEED_PREV  &ptr_spd SPEED_POINTER SPEED_NEXT  &ptr_spd SPEED_SCROLL SPEED_PREV  &ptr_spd SPEED_SCROLL SPEED_NEXT  &crq_mode CIRQUE_MODE_TOGGLE        &trans     &mkp MB4  &mkp MCLK  &mkp MB5  &trans
 			&kp C_MUTE &kp SPACE  &kp LSHIFT  &mkp LCLK  &mkp RCLK &studio_unlock
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
