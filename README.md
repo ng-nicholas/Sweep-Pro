@@ -7,6 +7,9 @@
 A high-performance, ultra-thin split ergonomic keyboard designed for enthusiasts and power users. Featuring ZMK Studio support, magnetic tenting, and a premium low-profile aesthetic.
 ![poster](images/poster.png)
 
+## Firmware Development
+
+* [Local firmware build](docs/en/local-build.md)
 
 ## 🤝 Support & Links
 

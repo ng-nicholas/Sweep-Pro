@@ -38,20 +38,28 @@
 };
 
 &glidepoint_listener {
-	input-processors = <&sniping_processor 1 4 &drag_scroll_processor 1 8>;
+	input-processors = <&pointer_processor 0 0 &drag_scroll_processor 1 8>;
 };
 
 / {
-	sniping_processor: sniping_processor {
+	pointer_processor: pointer_processor {
 		compatible = "zmk,input-processor-sniping";
 		#input-processor-cells = <2>;
 		track-remainders;
+		pointer-curve = "adaptive";
+		pointer-curve-deadzone = <2>;
+		pointer-curve-accel-multiplier = <1>;
+		pointer-curve-accel-divisor = <12>;
+		pointer-curve-max-delta = <120>;
 	};
 	
 	drag_scroll_processor: drag_scroll_processor {
 		compatible = "zmk,input-processor-drag-scroll";
 		#input-processor-cells = <2>;
 		track-remainders;
+		native-wheel-axis = "horizontal-when-enabled";
+		scroll-min-step = <1>;
+		scroll-max-delta = <6>;
 	};
 	
 	behaviors {
@@ -60,11 +68,6 @@
 			#binding-cells = <0>;
 		};
 	
-		snipe: sniping {
-			compatible = "zmk,behavior-sniping";
-			#binding-cells = <0>;
-		};
-
 		ptr_spd: pointing_speed {
 			compatible = "zmk,behavior-pointing-speed";
 			#binding-cells = <2>;
@@ -90,16 +93,6 @@
 			bindings = <&mkp>, <&kp>;
 		};
 	
-		snipe_c: sniping_c {
-			compatible = "zmk,behavior-hold-tap";
-			#binding-cells = <2>;
-			flavor = "tap-preferred";
-			tapping-term-ms = <200>;
-			quick-tap-ms = <150>;
-			require-prior-idle-ms = <125>;
-			bindings = <&snipe>, <&kp>;
-		};
-
 		ht: hold_tap {
 			label = "hold_tap";
 			compatible = "zmk,behavior-hold-tap";
@@ -140,7 +133,7 @@
 			bindings = <
 			&kp Q   &kp W       &kp E        &kp R        &kp T        &kp Y      &kp U        &kp I        &kp O       &kp P
 			&kp A   &ht LALT S  &ht LCTRL D  &ht LGUI F   &kp G         &kp H      &ht RGUI J   &ht RCTRL K  &ht RALT L  &kp BSPC
-			&ds_z 0 Z   &sel_x LCLK X       &snipe_c 0 C        &kp V        &kp B         &kp N      &kp M        &kp COMMA    &kp DOT     &kp ENTER
+			&ds_z 0 Z   &sel_x LCLK X       &kp C        &kp V        &kp B         &kp N      &kp M        &kp COMMA    &kp DOT     &kp ENTER
 			&kp C_MUTE  &lt LEF TAB  &kp LSHIFT    &kp SPACE  &lt RIG TAB   &studio_unlock
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
@@ -151,7 +144,7 @@
 			bindings = <
 			&kp Q  &kp W       &kp E       &kp R        &kp T         &kp Y      &kp U        &kp I       &kp O       &kp P
 			&kp A  &ht LALT S  &ht LGUI D  &ht LCTRL F  &kp G         &kp H      &ht RCTRL J  &ht RGUI K  &ht RALT L  &kp BSPC
-			&ds_z 0 Z  &sel_x LCLK X       &snipe_c 0 C       &kp V        &kp B         &kp N      &kp M        &kp COMMA   &kp DOT     &kp ENTER
+			&ds_z 0 Z  &sel_x LCLK X       &kp C       &kp V        &kp B         &kp N      &kp M        &kp COMMA   &kp DOT     &kp ENTER
 			&kp C_MUTE  &lt LEF TAB  &kp LSHIFT     &kp SPACE &lt RIG TAB  &studio_unlock
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;

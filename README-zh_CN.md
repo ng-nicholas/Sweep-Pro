@@ -8,6 +8,10 @@
 
 ![海报](images/poster.png)
 
+## 固件开发
+
+* [本地编译固件](docs/zh_CN/local-build.md)
+
 ## 🤝 支持与链接
 
 * **淘宝店铺:** 淘宝搜索 "ferris sweep" ([点击跳转店铺](https://item.taobao.com/item.htm?ft=t&id=1021093959607))
