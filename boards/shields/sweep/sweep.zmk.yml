@@ -11,4 +11,6 @@ features:
   - ink display
 siblings:
   - sweep_left
+  - sweep_left_display_hw
   - sweep_right
+  - sweep_right_trackpad

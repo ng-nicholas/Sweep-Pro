@@ -11,6 +11,8 @@ The following commands assume you are running them from the ZMK west workspace r
 
 The local build now uses the official `zmkfirmware/zmk` checkout. The Sweep-Pro display status screen has been split out of the old `lynnlee0522/zmk` fork into the standalone `zmk-vfx-sweep-pro-display` module, so builds with the display need that module in `ZMK_EXTRA_MODULES` and `sweep_display` in the `SHIELD` list.
 
+All Sweep-Pro hardware variants share one `config/sweep.keymap`. The display and trackpad are optional shields that get composed into the build, so one repository can produce 4 half-keyboard firmware files. Users only need to pick the UF2 files matching their hardware.
+
 ## Dependencies
 
 You need system build tools, the Zephyr SDK, and `uv`.
@@ -78,23 +80,58 @@ EXTRA_MODULES="$NXTKB_ROOT/Sweep-Pro;$NXTKB_ROOT/zmk-vfx-sweep-pro-display;$NXTK
 ZMK_CONFIG_DIR="$NXTKB_ROOT/Sweep-Pro/config"
 ```
 
-For the left half with the display, use a combined shield: `sweep_left` provides the keyboard and display hardware node, while `sweep_display` provides the custom status screen UI. USB logging and Studio RPC over USB UART are useful for debugging:
+The recommended output set is 4 half-keyboard firmware files:
+
+| Firmware | Shield combination | Use |
+| :--- | :--- | :--- |
+| `sweep_left` | `sweep_left` | Base left half, no display |
+| `sweep_left_display` | `sweep_left sweep_left_display_hw sweep_display` | Left half with e-ink display |
+| `sweep_right` | `sweep_right` | Base right half, no trackpad |
+| `sweep_right_trackpad` | `sweep_right sweep_right_trackpad` | Right half with Cirque trackpad |
+
+Use these combinations for the 4 keyboard variants:
+
+| Keyboard variant | Left UF2 | Right UF2 |
+| :--- | :--- | :--- |
+| Basic | `sweep_left` | `sweep_right` |
+| E-ink | `sweep_left_display` | `sweep_right` |
+| Trackpad | `sweep_left` | `sweep_right_trackpad` |
+| Flagship | `sweep_left_display` | `sweep_right_trackpad` |
+
+Base left half. Studio RPC over USB UART is useful for ZMK Studio remapping:
 
 ```shell
 west build -s app -p -d build/sweep_left -b nice_nano//zmk \
-    -S zmk-usb-logging -S studio-rpc-usb-uart -- \
-    -DSHIELD="sweep_left sweep_display" \
+    -S studio-rpc-usb-uart -- \
+    -DSHIELD=sweep_left \
     -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
     -DZMK_CONFIG="$ZMK_CONFIG_DIR"
 ```
 
-If you want to build the left-half firmware without the display status screen, change `-DSHIELD` back to `sweep_left`.
+Left half with display. `sweep_left_display_hw` provides the e-ink hardware node, and `sweep_display` provides the custom status screen UI:
 
-Right half:
+```shell
+west build -s app -p -d build/sweep_left_display -b nice_nano//zmk \
+    -S studio-rpc-usb-uart -- \
+    -DSHIELD="sweep_left sweep_left_display_hw sweep_display" \
+    -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
+    -DZMK_CONFIG="$ZMK_CONFIG_DIR"
+```
+
+Base right half:
 
 ```shell
 west build -s app -p -d build/sweep_right -b nice_nano//zmk -- \
     -DSHIELD=sweep_right \
+    -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
+    -DZMK_CONFIG="$ZMK_CONFIG_DIR"
+```
+
+Right half with trackpad. `sweep_right_trackpad` provides the Cirque I2C/Pinnacle node:
+
+```shell
+west build -s app -p -d build/sweep_right_trackpad -b nice_nano//zmk -- \
+    -DSHIELD="sweep_right sweep_right_trackpad" \
     -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
     -DZMK_CONFIG="$ZMK_CONFIG_DIR"
 ```
@@ -105,14 +142,18 @@ After a successful build, the firmware files are:
 
 ```text
 build/sweep_left/zephyr/zmk.uf2
+build/sweep_left_display/zephyr/zmk.uf2
 build/sweep_right/zephyr/zmk.uf2
+build/sweep_right_trackpad/zephyr/zmk.uf2
 ```
 
 For later builds with the same CMake parameters, you can usually reuse the build directories:
 
 ```shell
 west build -d build/sweep_left
+west build -d build/sweep_left_display
 west build -d build/sweep_right
+west build -d build/sweep_right_trackpad
 ```
 
 If you change the shield, extra modules, snippets, or `ZMK_CONFIG`, rerun the full command with `-p` to regenerate the build directory.
@@ -141,4 +182,4 @@ source directory "." does not contain a CMakeLists.txt
 
 you ran the command from the workspace root without `-s app`.
 
-The right-half build may show Kconfig warnings about USB, display widgets, or smooth scrolling being disabled for the split peripheral role. Those warnings come from the left/right role difference. If `zmk.uf2` is generated, the build succeeded.
+The right-half build may show Kconfig warnings about USB or central battery proxy options being disabled for the split peripheral role. Those warnings come from the left/right role difference. If `zmk.uf2` is generated, the build succeeded. Trackpad smooth scrolling is configured in the left central firmware; the right trackpad firmware only captures and forwards input events.

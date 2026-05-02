@@ -2,6 +2,12 @@
 config SHIELD_SWEEP_LEFT
     def_bool $(shields_list_contains,sweep_left)
 
+config SHIELD_SWEEP_LEFT_DISPLAY_HW
+    def_bool $(shields_list_contains,sweep_left_display_hw)
+
 # No whitespace after the comma or in your part name!
 config SHIELD_SWEEP_RIGHT
     def_bool $(shields_list_contains,sweep_right)
+
+config SHIELD_SWEEP_RIGHT_TRACKPAD
+    def_bool $(shields_list_contains,sweep_right_trackpad)

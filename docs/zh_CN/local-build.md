@@ -11,6 +11,8 @@ cd "$NXTKB_ROOT/zmkfirmware/zmk"
 
 当前本地编译使用官方 `zmkfirmware/zmk` checkout。Sweep-Pro 的屏幕状态栏已经从旧的 `lynnlee0522/zmk` fork 拆成独立模块 `zmk-vfx-sweep-pro-display`，所以编译带屏幕的左手固件时需要同时加入该 module，并把 `sweep_display` 放进 `SHIELD` 列表。
 
+Sweep-Pro 的 keymap 是所有硬件版本共用的一份 `config/sweep.keymap`。屏幕和触控板作为可选 shield 组合进构建，因此同一个仓库可以产出 4 个半边固件，用户只需要按自己的硬件版本选择对应 UF2。
+
 ## 依赖
 
 本机需要先准备系统构建工具、Zephyr SDK 和 `uv`。
@@ -78,23 +80,58 @@ EXTRA_MODULES="$NXTKB_ROOT/Sweep-Pro;$NXTKB_ROOT/zmk-vfx-sweep-pro-display;$NXTK
 ZMK_CONFIG_DIR="$NXTKB_ROOT/Sweep-Pro/config"
 ```
 
-左手带屏幕编译时使用组合 shield：`sweep_left` 提供键盘本体和屏幕硬件节点，`sweep_display` 提供自定义状态栏 UI。建议同时启用 USB logging 和 Studio RPC over USB UART，方便调试：
+推荐一次性编译 4 个半边固件：
+
+| 固件 | Shield 组合 | 用途 |
+| :--- | :--- | :--- |
+| `sweep_left` | `sweep_left` | 左手基础版，不带屏幕 |
+| `sweep_left_display` | `sweep_left sweep_left_display_hw sweep_display` | 左手带 e-ink 屏幕 |
+| `sweep_right` | `sweep_right` | 右手基础版，不带触控板 |
+| `sweep_right_trackpad` | `sweep_right sweep_right_trackpad` | 右手带 Cirque 触控板 |
+
+四种整机版本对应关系：
+
+| 整机版本 | 左手 UF2 | 右手 UF2 |
+| :--- | :--- | :--- |
+| Basic | `sweep_left` | `sweep_right` |
+| E-ink | `sweep_left_display` | `sweep_right` |
+| Trackpad | `sweep_left` | `sweep_right_trackpad` |
+| Flagship | `sweep_left_display` | `sweep_right_trackpad` |
+
+左手基础版。建议启用 Studio RPC over USB UART，方便用 ZMK Studio 改键：
 
 ```shell
 west build -s app -p -d build/sweep_left -b nice_nano//zmk \
-    -S zmk-usb-logging -S studio-rpc-usb-uart -- \
-    -DSHIELD="sweep_left sweep_display" \
+    -S studio-rpc-usb-uart -- \
+    -DSHIELD=sweep_left \
     -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
     -DZMK_CONFIG="$ZMK_CONFIG_DIR"
 ```
 
-如果只想编译不带屏幕状态栏的左手固件，可以把 `-DSHIELD` 改回 `sweep_left`。
+左手带屏幕。`sweep_left_display_hw` 提供 e-ink 硬件节点，`sweep_display` 提供自定义状态栏 UI：
 
-右手：
+```shell
+west build -s app -p -d build/sweep_left_display -b nice_nano//zmk \
+    -S studio-rpc-usb-uart -- \
+    -DSHIELD="sweep_left sweep_left_display_hw sweep_display" \
+    -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
+    -DZMK_CONFIG="$ZMK_CONFIG_DIR"
+```
+
+右手基础版：
 
 ```shell
 west build -s app -p -d build/sweep_right -b nice_nano//zmk -- \
     -DSHIELD=sweep_right \
+    -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
+    -DZMK_CONFIG="$ZMK_CONFIG_DIR"
+```
+
+右手带触控板。`sweep_right_trackpad` 提供 Cirque I2C/Pinnacle 节点：
+
+```shell
+west build -s app -p -d build/sweep_right_trackpad -b nice_nano//zmk -- \
+    -DSHIELD="sweep_right sweep_right_trackpad" \
     -DZMK_EXTRA_MODULES="$EXTRA_MODULES" \
     -DZMK_CONFIG="$ZMK_CONFIG_DIR"
 ```
@@ -105,14 +142,18 @@ west build -s app -p -d build/sweep_right -b nice_nano//zmk -- \
 
 ```text
 build/sweep_left/zephyr/zmk.uf2
+build/sweep_left_display/zephyr/zmk.uf2
 build/sweep_right/zephyr/zmk.uf2
+build/sweep_right_trackpad/zephyr/zmk.uf2
 ```
 
 第二次编译同一个 build 目录时，如果 CMake 参数没有变化，可以直接执行：
 
 ```shell
 west build -d build/sweep_left
+west build -d build/sweep_left_display
 west build -d build/sweep_right
+west build -d build/sweep_right_trackpad
 ```
 
 修改了 shield、extra modules、snippets 或 `ZMK_CONFIG` 后，建议继续使用带 `-p` 的完整命令重新生成构建目录。
@@ -141,4 +182,4 @@ source directory "." does not contain a CMakeLists.txt
 
 说明命令从 workspace 根目录执行时缺少 `-s app`。
 
-右手构建可能出现一些 Kconfig 提示，例如 USB、display widget 或 smooth scrolling 的配置被 split peripheral 角色关闭。这类提示来自左右手角色差异；只要最终生成 `zmk.uf2`，构建就是成功的。
+右手构建可能出现一些 Kconfig 提示，例如 USB 或 central battery proxy 的配置被 split peripheral 角色关闭。这类提示来自左右手角色差异；只要最终生成 `zmk.uf2`，构建就是成功的。触控板滚动的 smooth scrolling 配置放在左手 central 固件中，右手触控板固件只负责采集并转发输入事件。
