@@ -62,7 +62,6 @@
 		track-remainders;
 		native-wheel-axis = "horizontal-when-enabled";
 		scroll-min-step = <1>;
-		scroll-max-delta = <6>;
 	};
 	
 	behaviors {
