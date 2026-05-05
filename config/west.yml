@@ -20,6 +20,6 @@ manifest:
     import: west.yml
   - name: cirque-input-module
     remote: nxtkb
-    revision: e60bcaf802b4dd927f06dfba0b775eb0b9591acf
+    revision: 4976d66d6d959d11ac7c163c1f010c2d758d1149
   self:
     path: config

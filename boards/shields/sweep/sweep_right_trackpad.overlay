@@ -31,7 +31,7 @@
 		status = "okay";
 		data-ready-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 		sensitivity = "2x";
-		data-mode = "relative";
+		data-mode = "absolute";
 		idle-packets-count = <3>;
 		absolute-touch-min-z = <12>;
 		absolute-relative-multiplier = <3>;
@@ -55,7 +55,6 @@
 		startup-delay-ms = <600>;
 		primary-tap-enable;
 		glide-extend-enable;
-		sleep-mode-enable;
 		invert-y;
 	};
 };
