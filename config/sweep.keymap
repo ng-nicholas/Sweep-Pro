@@ -85,6 +85,16 @@
 			compatible = "zmk,behavior-cirque-mode";
 			#binding-cells = <1>;
 		};
+
+		sel_x: select_x {
+			compatible = "zmk,behavior-hold-tap";
+			#binding-cells = <2>;
+			flavor = "tap-preferred";
+			tapping-term-ms = <200>;
+			quick-tap-ms = <150>;
+			require-prior-idle-ms = <125>;
+			bindings = <&mkp>, <&kp>;
+		};
 		
 		ds_z: drag_scroll_z {
 			compatible = "zmk,behavior-hold-tap";
@@ -176,11 +186,11 @@
 		compatible = "zmk,keymap";
 		
 		default_layer {
-			display-name = "DEFAULT";
+			display-name = "DEF";
 			bindings = <
 			&kp Q   &kp W       &kp E        &kp R        &kp T        &kp Y      &kp U        &kp I        &kp O       &kp P
 			&kp A   &ht LALT S  &ht LCTRL D  &ht LGUI F   &kp G         &kp H      &ht RGUI J   &ht RCTRL K  &ht RALT L  &kp BSPC
-			&ds_z 0 Z   &kp X       &kp C        &kp V        &kp B         &kp N      &kp M        &kp COMMA    &kp DOT     &kp ENTER
+			&ds_z 0 Z   &sel_x LCLK X       &kp C        &kp V        &kp B         &kp N      &kp M        &kp COMMA    &kp DOT     &kp ENTER
 			&kp C_MUTE  &lt LEF TAB  &kp LSHIFT    &kp SPACE  &lt RIG TAB   &studio_unlock
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
@@ -191,7 +201,7 @@
 			bindings = <
 			&kp Q  &kp W       &kp E       &kp R        &kp T         &kp Y      &kp U        &kp I       &kp O       &kp P
 			&kp A  &ht LALT S  &ht LGUI D  &ht LCTRL F  &kp G         &kp H      &ht RCTRL J  &ht RGUI K  &ht RALT L  &kp BSPC
-			&ds_z 0 Z  &kp X       &kp C       &kp V        &kp B         &kp N      &kp M        &kp COMMA   &kp DOT     &kp ENTER
+			&ds_z 0 Z  &sel_x LCLK X       &kp C       &kp V        &kp B         &kp N      &kp M        &kp COMMA   &kp DOT     &kp ENTER
 			&kp C_MUTE  &lt LEF TAB  &kp LSHIFT     &kp SPACE &lt RIG TAB  &studio_unlock
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
@@ -209,7 +219,7 @@
 		};
 		
 		left_layer {
-			display-name = "SYMBOL";
+			display-name = "SYM";
 			bindings = <
 			&kp EXCL  &kp AT    &kp HASH  &kp DLLR  &kp PRCNT    &kp CARET  &kp AMPS   &kp ASTRK  &kp GRAVE  &kp TILDE
 			&kp DQT   &kp LBKT  &kp LBRC  &kp LPAR  &default_report     &kp FSLH   &kp MINUS  &kp EQUAL  &kp COLON  &kp SEMI
@@ -220,7 +230,7 @@
 		};
 		
 		tri_layer {
-			display-name = "FUNC";
+			display-name = "FUN";
 			bindings = <
 			&kp F1  &kp F2   &kp F3   &kp F4   &bt BT_SEL 0    &bt BT_SEL 2  &out OUT_TOG   &tog WIN  &kp C_MUTE    &kp C_PREV
 			&kp F5  &kp F6   &kp F7   &kp F8   &bt BT_SEL 1    &bt BT_SEL 3  &kp C_BRI_UP   &studio_unlock    &kp C_VOL_UP  &kp C_PP
