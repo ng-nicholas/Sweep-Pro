@@ -6,8 +6,6 @@ manifest:
     url-base: https://github.com/lynnlee0522
   - name: nxtkb
     url-base: https://github.com/nxtkb
-  - name: maatthc
-    url-base: https://github.com/maatthc
   projects:
   - name: zmk
     remote: zmkfirmware
@@ -23,8 +21,5 @@ manifest:
   - name: cirque-input-module
     remote: nxtkb
     revision: 8af03a4c061580c14ec8745caf0fa2dd3fc7f042
-  - name: zmk-feature-appcompanion
-    remote: maatthc
-    revision: main
   self:
     path: config
