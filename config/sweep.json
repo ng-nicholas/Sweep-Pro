@@ -16,19 +16,19 @@
         {"label": "O",      "row": 0, "col": 8, "x": 10.0, "y": 0.32},
         {"label": "P",      "row": 0, "col": 9, "x": 11.0, "y": 0.95},
 
-        {"label": "A",      "row": 1, "col": 0, "x": 0,    "y": 1.95},
-        {"label": "S",      "row": 1, "col": 1, "x": 1.0,  "y": 1.32},
-        {"label": "D",      "row": 1, "col": 2, "x": 2.0,  "y": 1.0},
-        {"label": "F",      "row": 1, "col": 3, "x": 3.0,  "y": 1.29},
+        {"label": "A/GUI",  "row": 1, "col": 0, "x": 0,    "y": 1.95},
+        {"label": "S/ALT",  "row": 1, "col": 1, "x": 1.0,  "y": 1.32},
+        {"label": "D/CTRL", "row": 1, "col": 2, "x": 2.0,  "y": 1.0},
+        {"label": "F/SHT",  "row": 1, "col": 3, "x": 3.0,  "y": 1.29},
         {"label": "G",      "row": 1, "col": 4, "x": 4.0,  "y": 1.42},
         {"label": "H",      "row": 1, "col": 5, "x": 7.0,  "y": 1.42},
-        {"label": "J",      "row": 1, "col": 6, "x": 8.0,  "y": 1.29},
-        {"label": "K",      "row": 1, "col": 7, "x": 9.0,  "y": 1.0},
-        {"label": "L",      "row": 1, "col": 8, "x": 10.0, "y": 1.32},
-        {"label": "BSPC",   "row": 1, "col": 9, "x": 11.0, "y": 1.95},
+        {"label": "J/SHT",  "row": 1, "col": 6, "x": 8.0,  "y": 1.29},
+        {"label": "K/CTRL", "row": 1, "col": 7, "x": 9.0,  "y": 1.0},
+        {"label": "L/ALT",  "row": 1, "col": 8, "x": 10.0, "y": 1.32},
+        {"label": ";/GUI",  "row": 1, "col": 9, "x": 11.0, "y": 1.95},
 
-        {"label": "Z",      "row": 2, "col": 0, "x": 0,    "y": 2.95},
-        {"label": "X",      "row": 2, "col": 1, "x": 1.0,  "y": 2.31},
+        {"label": "Z/SCR",  "row": 2, "col": 0, "x": 0,    "y": 2.95},
+        {"label": "X/CLK",  "row": 2, "col": 1, "x": 1.0,  "y": 2.31},
         {"label": "C",      "row": 2, "col": 2, "x": 2.0,  "y": 2.0},
         {"label": "V",      "row": 2, "col": 3, "x": 3.0,  "y": 2.29},
         {"label": "B",      "row": 2, "col": 4, "x": 4.0,  "y": 2.42},
@@ -38,12 +38,12 @@
         {"label": ".",      "row": 2, "col": 8, "x": 10.0, "y": 2.31},
         {"label": "ENTER",  "row": 2, "col": 9, "x": 11.0, "y": 2.95},
 
-        {"label": "MUTE",   "row": 3, "col": 2, "x": 2.3,  "y": 3.55},
-        {"label": "TAB",    "row": 3, "col": 3, "x": 3.3,  "y": 3.55, "r": 15,  "rx": 4.3, "ry": 4.55},
-        {"label": "SHIFT",  "row": 3, "col": 4, "x": 4.3,  "y": 3.55, "r": 30,  "rx": 4.3, "ry": 4.55},
-        {"label": "SPACE",  "row": 3, "col": 5, "x": 6.7,  "y": 3.55, "r": -30, "rx": 7.7, "ry": 4.55},
-        {"label": "TAB",    "row": 3, "col": 6, "x": 7.7,  "y": 3.55, "r": -15, "rx": 7.7, "ry": 4.55},
-        {"label": "UNLOCK", "row": 3, "col": 7, "x": 8.7,  "y": 3.55}
+        {"label": "MUTE",        "row": 3, "col": 2, "x": 2.3,  "y": 3.55},
+        {"label": "NAV/ESC",     "row": 3, "col": 3, "x": 3.3,  "y": 3.55, "r": 15,  "rx": 4.3, "ry": 4.55},
+        {"label": "SPC/ENTER",   "row": 3, "col": 4, "x": 4.3,  "y": 3.55, "r": 30,  "rx": 4.3, "ry": 4.55},
+        {"label": "SPC/ENTER",   "row": 3, "col": 5, "x": 6.7,  "y": 3.55, "r": -30, "rx": 7.7, "ry": 4.55},
+        {"label": "NUM/BSPC",    "row": 3, "col": 6, "x": 7.7,  "y": 3.55, "r": -15, "rx": 7.7, "ry": 4.55},
+        {"label": "UNLOCK",      "row": 3, "col": 7, "x": 8.7,  "y": 3.55}
       ]
     }
   }
