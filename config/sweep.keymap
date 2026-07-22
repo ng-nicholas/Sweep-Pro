@@ -13,8 +13,8 @@
 
 // ─── Layer indices ────────────────────────────────────────────────────────────
 
-#define MAC   0   // Base – QWERTY, GACS home row mods (Mac: Ctrl=D/K, GUI=F/J)
-#define WIN   1   // Base – WIN variant (Ctrl=F/J, GUI=D/K)
+#define WIN   0   // Base – WIN variant (Ctrl=F/J, GUI=D/K)
+#define MAC   1   // Base – QWERTY, GACS home row mods (Mac: Ctrl=D/K, GUI=F/J)
 #define NAV   2   // Navigation / arrows  (hold left inner thumb)
 #define NUM   3   // Numbers / F-keys     (hold right inner thumb)
 #define SYM   4   // Symbols              (tri-layer: NAV+NUM)
@@ -159,6 +159,22 @@
                 <&ptr_spd SPEED_SCROLL SPEED_NEXT>;
         };
 
+        // ─── Encoder: Win window cycle (Alt+Tab) ──────────────────────────────
+
+        enc_win_cycle: encoder_win_cycle {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&kp LA(LS(TAB))>, <&kp LA(TAB)>;
+        };
+
+        // ─── Encoder: Mac app cycle (Cmd+`) ───────────────────────────────────
+
+        enc_mac_cycle: encoder_mac_cycle {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&kp LG(LS(GRAVE))>, <&kp LG(GRAVE)>;
+        };
+
         hml: hml {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -212,17 +228,6 @@
         };
     };
 
-    // ─── Conditional layers ───────────────────────────────────────────────────
-
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
-
-        comp_controls {
-            if-layers = <2 5>;
-            then-layer = <8>;
-        };
-    };
-
     // ─── Combos ───────────────────────────────────────────────────────────────
     // Key positions:
     //  Row 0:  0  1  2  3  4    5  6  7  8  9   (Q W E R T | Y U I O P)
@@ -236,13 +241,39 @@
         // ── Mouse button combos (left hand, active on base + mouse layers) ────
         // ── Symbol combos (right hand, active on base layers) ─────────────────
         // ── Quick Escape combo (WE, left hand) ───────────────────────────────
+
+        // ── Hardware layer toggle (inner thumbs: DELETE + BACKSPACE) ──────────
+        combo_hw_toggle {
+            bindings = <&tog 8>;
+            key-positions = <31 34>;
+            timeout-ms = <50>;
+            layers = <0 1>;
+        };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
         // ─────────────────────────────────────────────────────────────────────
-        // Layer 0: BASE – Mac
+        // Layer 0: BASE – Win
+        // Home row GACS (left):  A=GUI  S=ALT  D=SHIFT  F=CTRL
+        // Home row GACS (right): J=CTRL  K=SHIFT  L=ALT  ;=GUI
+        // ─────────────────────────────────────────────────────────────────────
+
+        win_layer {
+            display-name = "WIN";
+            bindings = <
+&kp Q        &kp W          &kp E              &kp R         &lt_tp 4 T  &lt_tp 7 Y  &kp U          &kp I               &kp O        &kp P
+&hml LGUI A  &hml LALT S    &hml LEFT_SHIFT D  &hml LCTRL F  &lt_tp 2 G  &lt_tp 5 H  &hmr RCTRL J   &hmr RIGHT_SHIFT K  &hmr RALT L  &hmr RGUI SEMI
+&ds_z 0 Z    &sel_x LCLK X  &kp C              &kp V         &lt_tp 3 B  &lt_tp 6 N  &kp M          &kp COMMA           &kp DOT      &kp FSLH
+                            &kp C_MUTE         &kp DELETE    &td_spc     &td_spc     &kp BACKSPACE  &kp PRINTSCREEN
+            >;
+
+            sensor-bindings = <&enc_win_cycle &inc_dec_kp LC(MINUS) LC(EQUAL)>;
+        };
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Layer 1: BASE – Mac
         // Home row GACS (left):  A=GUI  S=ALT  D=CTRL  F=SHIFT
         // Home row GACS (right): J=SHIFT  K=CTRL  L=ALT  ;=GUI
         // Thumb T1: hold=NAV, tap=ESC
@@ -260,19 +291,7 @@
                             &kp C_MUTE    &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp PRINTSCREEN
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
-        };
-
-        win_layer {
-            display-name = "WIN";
-            bindings = <
-&kp Q        &kp W          &kp E              &kp R         &lt_tp 4 T  &lt_tp 7 Y  &kp U          &kp I               &kp O        &kp P
-&hml LGUI A  &hml LALT S    &hml LEFT_SHIFT D  &hml LCTRL F  &lt_tp 2 G  &lt_tp 5 H  &hmr RCTRL J   &hmr RIGHT_SHIFT K  &hmr RALT L  &hmr RGUI SEMI
-&ds_z 0 Z    &sel_x LCLK X  &kp C              &kp V         &lt_tp 3 B  &lt_tp 6 N  &kp M          &kp COMMA           &kp DOT      &kp FSLH
-                            &kp C_MUTE         &kp DELETE    &td_spc     &td_spc     &kp BACKSPACE  &kp PRINTSCREEN
-            >;
-
-            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
+            sensor-bindings = <&enc_mac_cycle &inc_dec_kp LG(MINUS) LG(EQUAL)>;
         };
 
         sym_layer {
