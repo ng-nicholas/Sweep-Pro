@@ -247,7 +247,7 @@
             bindings = <&tog 8>;
             key-positions = <31 34>;
             timeout-ms = <50>;
-            layers = <0 1>;
+            layers = <0 1 8>;
         };
     };
 
