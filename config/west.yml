@@ -27,6 +27,6 @@ manifest:
     revision: 8af03a4c061580c14ec8745caf0fa2dd3fc7f042
   - name: zmk-feature-appcompanion
     remote: ng-nicholas
-    revision: 56e4ef009d4c512f5aade1aa1cb52d03c65a6117
+    revision: 765b08ced1c7876685915623adeeda6d9eb68384
   self:
     path: config
