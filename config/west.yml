@@ -8,6 +8,8 @@ manifest:
     url-base: https://github.com/nxtkb
   - name: maatthc
     url-base: https://github.com/maatthc
+  - name: ng-nicholas
+    url-base: https://github.com/ng-nicholas
   projects:
   - name: zmk
     remote: zmkfirmware
@@ -24,7 +26,7 @@ manifest:
     remote: nxtkb
     revision: 8af03a4c061580c14ec8745caf0fa2dd3fc7f042
   - name: zmk-feature-appcompanion
-    remote: maatthc
-    revision: main
+    remote: ng-nicholas
+    revision: 56e4ef009d4c512f5aade1aa1cb52d03c65a6117
   self:
     path: config
