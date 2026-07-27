@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import re
 from pathlib import Path
 
@@ -21,6 +22,27 @@ REPO = Path(__file__).resolve().parent.parent
 KEYMAP = REPO / "config" / "sweep.keymap"
 LAYOUT = REPO / "config" / "sweep.json"
 ASSETS = REPO / "Keyboard Companion" / "assets"
+
+# Output dir for the LVGL I1 C image arrays. These land directly in the
+# zmk-vfx-sweep-pro-display module's images dir so the shield build picks them
+# up. The module is a sibling clone of this repo by default; override with the
+# KEYMAP_I1_OUT_DIR env var (or the --i1-out-dir CLI arg) to point elsewhere.
+DEFAULT_I1_OUT_DIR = (
+    REPO.parent
+    / "zmk-vfx-sweep-pro-display"
+    / "boards"
+    / "shields"
+    / "sweep_display"
+    / "images"
+)
+I1_OUT_DIR = Path(os.environ.get("KEYMAP_I1_OUT_DIR", DEFAULT_I1_OUT_DIR))
+
+# Base layers get no mini-keymap image (they keep the normal status screen).
+BASE_LAYERS = {"win", "mac"}
+
+# I1 target image dimensions (left-half e-ink drawable area after rotation).
+I1_W = 152
+I1_H = 152
 
 # Render scale: pixels per 1u key unit.
 UNIT = 132
@@ -227,14 +249,226 @@ def render_layer(name, bindings, layout):
     return out
 
 
+# ── I1 mini-keymap emission ─────────────────────────────────────────────────
+
+def _is_trans(binding: str) -> bool:
+    return binding.split()[0] in ("&trans", "&none")
+
+
+def busy_side(bindings, layout):
+    """Return 'left' or 'right': the hand with more non-trans/none bindings.
+
+    Left hand = layout keys with integer x in 0..3, right hand = x in 8..11.
+    """
+    left = right = 0
+    for i, keydef in enumerate(layout):
+        if i >= len(bindings) or _is_trans(bindings[i]):
+            continue
+        x = keydef["x"]
+        # Only count the outer finger columns of each hand.
+        if 0 <= x <= 3:
+            left += 1
+        elif 8 <= x <= 11:
+            right += 1
+    return "left" if left >= right else "right"
+
+
+def extract_grid(bindings, layout, side):
+    """Return a 3x4 grid (rows 0..2, 4 outer finger cols) of (main, sub) labels.
+
+    Drops the inner 5th column (x==4 / x==7) and the thumb row (row 3).
+    For the right hand, columns are mirrored so the pinky column is outermost.
+    """
+    if side == "left":
+        cols = [0, 1, 2, 3]          # pinky -> index (outer -> inner)
+    else:
+        cols = [11, 10, 9, 8]        # mirror: pinky (x=11) outermost
+
+    grid = [[("", "") for _ in range(4)] for _ in range(3)]
+    for i, keydef in enumerate(layout):
+        if i >= len(bindings):
+            break
+        row = keydef.get("row")
+        x = keydef["x"]
+        if row not in (0, 1, 2) or x not in cols:
+            continue
+        c = cols.index(x)
+        grid[row][c] = binding_labels(bindings[i])
+    return grid
+
+
+def render_i1_layer(name, bindings, layout):
+    """Render a 152x152 mode '1' image: header + 4x3 label grid. Returns Image."""
+    side = busy_side(bindings, layout)
+    grid = extract_grid(bindings, layout, side)
+
+    img = Image.new("1", (I1_W, I1_H), 1)  # 1 == white background
+    d = ImageDraw.Draw(img)
+
+    hdr_font = load_font(20)
+    main_font = load_font(18)
+    sub_font = load_font(11)
+
+    # Header band with layer name.
+    header = name.upper()
+    hb = d.textbbox((0, 0), header, font=hdr_font)
+    d.text(((I1_W - (hb[2] - hb[0])) / 2 - hb[0], 4 - hb[1]),
+           header, font=hdr_font, fill=0)
+    d.line([(0, 30), (I1_W - 1, 30)], fill=0, width=1)
+
+    # 4 cols x 3 rows grid below the header.
+    top = 34
+    cell_w = I1_W / 4
+    cell_h = (I1_H - top) / 3
+    for r in range(3):
+        for c in range(4):
+            x0 = c * cell_w
+            y0 = top + r * cell_h
+            x1 = x0 + cell_w
+            y1 = y0 + cell_h
+            d.rectangle([x0, y0, x1 - 1, y1 - 1], outline=0, width=1)
+            main, sub = grid[r][c]
+            cx = (x0 + x1) / 2
+            cy = (y0 + y1) / 2
+            if main:
+                if sub:
+                    mb = d.textbbox((0, 0), main, font=main_font)
+                    d.text((cx - (mb[2] - mb[0]) / 2 - mb[0],
+                            cy - (mb[3] - mb[1]) / 2 - mb[1] - 8),
+                           main, font=main_font, fill=0)
+                    sb = d.textbbox((0, 0), sub, font=sub_font)
+                    d.text((cx - (sb[2] - sb[0]) / 2 - sb[0],
+                            cy - (sb[3] - sb[1]) / 2 - sb[1] + 12),
+                           sub, font=sub_font, fill=0)
+                else:
+                    mb = d.textbbox((0, 0), main, font=main_font)
+                    d.text((cx - (mb[2] - mb[0]) / 2 - mb[0],
+                            cy - (mb[3] - mb[1]) / 2 - mb[1]),
+                           main, font=main_font, fill=0)
+    return img
+
+
+def pack_i1_rows(img):
+    """Pack a mode '1' image into MSB-first 1bpp rows. bit=1 -> black (index 1).
+
+    Pillow mode '1': pixel value 255 == white, 0 == black. We map black->1 so
+    palette index 1 (black) is selected, matching a white/black palette prefix.
+    """
+    w, h = img.size
+    stride = (w + 7) // 8
+    px = img.load()
+    out = bytearray()
+    for y in range(h):
+        for bx in range(stride):
+            byte = 0
+            for bit in range(8):
+                x = bx * 8 + bit
+                if x < w and px[x, y] == 0:  # black pixel -> set bit
+                    byte |= 0x80 >> bit
+            out.append(byte)
+    return bytes(out), stride
+
+
+def emit_i1_c(name, data, stride, w, h, out_dir):
+    """Write an LVGL LV_COLOR_FORMAT_I1 C file matching logo_img.c structure."""
+    sym = f"keymap_{name}_img"
+    upper = sym.upper()
+    # 2-color palette prefix (ARGB8888, 4 bytes each): white then black.
+    palette = bytes([0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF])
+
+    lines = []
+    lines.append("#ifdef __has_include")
+    lines.append('#if __has_include("lvgl.h")')
+    lines.append("#ifndef LV_LVGL_H_INCLUDE_SIMPLE")
+    lines.append("#define LV_LVGL_H_INCLUDE_SIMPLE")
+    lines.append("#endif")
+    lines.append("#endif")
+    lines.append("#endif")
+    lines.append("")
+    lines.append("#if defined(LV_LVGL_H_INCLUDE_SIMPLE)")
+    lines.append('#include "lvgl.h"')
+    lines.append("#else")
+    lines.append('#include "lvgl/lvgl.h"')
+    lines.append("#endif")
+    lines.append("")
+    lines.append("#ifndef LV_ATTRIBUTE_MEM_ALIGN")
+    lines.append("#define LV_ATTRIBUTE_MEM_ALIGN")
+    lines.append("#endif")
+    lines.append("")
+    lines.append(f"#ifndef LV_ATTRIBUTE_{upper}")
+    lines.append(f"#define LV_ATTRIBUTE_{upper}")
+    lines.append("#endif")
+    lines.append("")
+    lines.append("static const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST "
+                 f"LV_ATTRIBUTE_{upper} uint8_t")
+    lines.append(f" {sym}_map[] = {{")
+    lines.append("")
+
+    def fmt(chunk):
+        return " ".join(f"0x{b:02x}," for b in chunk)
+
+    lines.append(" " + fmt(palette))
+    lines.append("")
+    for i in range(0, len(data), 15):
+        lines.append(" " + fmt(data[i:i + 15]))
+    lines.append("")
+    lines.append("};")
+    lines.append("")
+    lines.append(f"const lv_image_dsc_t {sym} = {{")
+    lines.append(" .header =")
+    lines.append(" {")
+    lines.append(" .magic = LV_IMAGE_HEADER_MAGIC,")
+    lines.append(" .cf = LV_COLOR_FORMAT_I1,")
+    lines.append(" .flags = 0,")
+    lines.append(f" .w = {w},")
+    lines.append(f" .h = {h},")
+    lines.append(f" .stride = {stride},")
+    lines.append(" .reserved_2 = 0,")
+    lines.append(" },")
+    lines.append(f" .data_size = sizeof({sym}_map),")
+    lines.append(f" .data = {sym}_map,")
+    lines.append(" .reserved = NULL,")
+    lines.append("};")
+    lines.append("")
+
+    out = out_dir / f"{sym}.c"
+    out.write_text("\n".join(lines), encoding="utf-8")
+    total = len(palette) + len(data)
+    return out, sym, total
+
+
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--i1-out-dir",
+        type=Path,
+        default=I1_OUT_DIR,
+        help="Output dir for the LVGL I1 keymap_<layer>_img.c files "
+        "(default: sibling zmk-vfx-sweep-pro-display module images dir, "
+        "overridable via the KEYMAP_I1_OUT_DIR env var).",
+    )
+    args = parser.parse_args()
+    i1_out_dir = args.i1_out_dir
+
     ASSETS.mkdir(parents=True, exist_ok=True)
+    i1_out_dir.mkdir(parents=True, exist_ok=True)
     layout = parse_layout()
     layers = parse_layers()
     print(f"Layout keys: {len(layout)}  Layers: {len(layers)}")
+    print(f"I1 output dir: {i1_out_dir}")
     for name, bindings in layers:
         out = render_layer(name, bindings, layout)
         print(f"  wrote {out.name}  ({len(bindings)} bindings)")
+        if name in BASE_LAYERS:
+            print(f"  skip I1 for base layer '{name}'")
+            continue
+        side = busy_side(bindings, layout)
+        i1_img = render_i1_layer(name, bindings, layout)
+        data, stride = pack_i1_rows(i1_img)
+        cfile, sym, total = emit_i1_c(name, data, stride, I1_W, I1_H, i1_out_dir)
+        print(f"  wrote {cfile.name}  (busy={side}, {sym}, {total} bytes)")
 
 
 if __name__ == "__main__":

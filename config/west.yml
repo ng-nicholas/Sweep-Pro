@@ -16,8 +16,8 @@ manifest:
     revision: cb615aee9a7c427e251f2ab62080c1a44a165da9
     import: app/west.yml
   - name: zmk-vfx-sweep-pro-display
-    remote: nxtkb
-    revision: 88809b0ba9f8af51e937c90d3c34edb9480e5455
+    remote: ng-nicholas
+    revision: 7e7ae9986615af82f2a355c49b1fa830c0c2168f
   - name: zmk-behavior-report
     remote: nxtkb
     revision: 476f43da1f98b4a6150c9c0e499a257bd64a29a0
