@@ -32,11 +32,11 @@
 		data-ready-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 		sensitivity = "2x";
 		data-mode = "absolute";
-		idle-packets-count = <3>;
-		absolute-touch-min-z = <12>;
+		idle-packets-count = <4>;
+		absolute-touch-min-z = <16>;
 		absolute-relative-multiplier = <3>;
-		absolute-relative-divisor = <10>;
-		absolute-tap-click-ms = <30>;
+		absolute-relative-divisor = <12>;
+		absolute-tap-click-ms = <40>;
 		absolute-tap-drag-enable;
 		absolute-tap-drag-timeout-ms = <300>;
 		absolute-tap-drag-max-movement = <160>;

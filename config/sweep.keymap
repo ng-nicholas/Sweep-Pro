@@ -42,7 +42,7 @@
     right_encoder { triggers-per-rotation = <45>; };
 };
 
-&glidepoint_listener { input-processors = <&pointer_processor 0 0 &drag_scroll_processor 1 8>; };
+&glidepoint_listener { input-processors = <&pointer_processor 0 0 &drag_scroll_processor 1 6>; };
 
 / {
     // ─── Input processors ─────────────────────────────────────────────────────
@@ -52,10 +52,10 @@
         #input-processor-cells = <2>;
         track-remainders;
         pointer-curve = "adaptive";
-        pointer-curve-deadzone = <2>;
+        pointer-curve-deadzone = <1>;
         pointer-curve-accel-multiplier = <1>;
-        pointer-curve-accel-divisor = <12>;
-        pointer-curve-max-delta = <120>;
+        pointer-curve-accel-divisor = <16>;
+        pointer-curve-max-delta = <90>;
         one-x-multiplier = <1>;
         one-x-divisor = <1>;
         min-percent = <10>;
