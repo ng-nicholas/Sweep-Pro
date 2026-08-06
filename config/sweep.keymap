@@ -261,7 +261,7 @@
             bindings = <&tog 8>;
             key-positions = <32 33>;
             timeout-ms = <50>;
-            layers = <0 8>;
+            layers = <0 1 8>;
         };
     };
 
@@ -287,7 +287,7 @@
         };
 
         win_alt_layer {
-            display-name = "WIN";
+            display-name = "WINALT";
             bindings = <
 &kp Q        &kp W          &kp E               &kp R          &lt_tp 3 T  &lt_tp 7 Y     &kp U          &kp I                &kp O        &kp P
 &hml LGUI A  &hml LALT S    &hrsc LEFT_SHIFT D  &hrsc LCTRL F  &lt_tp 2 G  &lt_tp 5 H     &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L  &hmr RGUI SEMI
