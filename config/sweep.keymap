@@ -7,6 +7,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/pointing.h>
 #include "behaviors/character_map.dtsi"
 #include "behaviors/report.dtsi"
@@ -260,7 +261,7 @@
             bindings = <&tog 8>;
             key-positions = <32 33>;
             timeout-ms = <50>;
-            layers = <0 1 8>;
+            layers = <0 8>;
         };
     };
 
@@ -276,25 +277,27 @@
         win_layer {
             display-name = "WIN";
             bindings = <
+&kp Q        &kp W          &kp E               &kp R          &lt_tp 3 T  &lt_tp 7 Y  &kp U          &kp I                &kp O        &kp P
+&hml LGUI A  &hml LALT S    &hrsc LEFT_SHIFT D  &hrsc LCTRL F  &lt_tp 2 G  &lt_tp 5 H  &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L  &hmr RGUI SEMI
+&ds_z 0 Z    &sel_x LCLK X  &sel_x MCLK C       &sel_x RCLK V  &lt_tp 4 B  &lt_tp 6 N  &kp M          &kp COMMA            &kp DOT      &kp FSLH
+                            &kp ESCAPE          &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp PRINTSCREEN
+            >;
+
+            sensor-bindings = <&enc_win_cycle &inc_dec_kp LC(MINUS) LC(EQUAL)>;
+        };
+
+        win_alt_layer {
+            display-name = "WIN";
+            bindings = <
 &kp Q        &kp W          &kp E               &kp R          &lt_tp 3 T  &lt_tp 7 Y     &kp U          &kp I                &kp O        &kp P
 &hml LGUI A  &hml LALT S    &hrsc LEFT_SHIFT D  &hrsc LCTRL F  &lt_tp 2 G  &lt_tp 5 H     &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L  &hmr RGUI SEMI
 &ds_z 0 Z    &sel_x LCLK X  &sel_x MCLK C       &sel_x RCLK V  &lt_tp 4 B  &lt_tp 6 N     &kp M          &kp COMMA            &kp DOT      &kp FSLH
                             &kp ESCAPE          &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp PRINTSCREEN
             >;
 
-            sensor-bindings = <&enc_win_cycle &inc_dec_kp LC(MINUS) LC(EQUAL)>;
-        };
-
-        mac_layer {
-            display-name = "MAC";
-            bindings = <
-&kp Q        &kp W          &kp E          &kp R           &lt_tp 3 T  &lt_tp 7 Y     &kp U           &kp I            &kp O        &kp P
-&hml LGUI A  &hml LALT S    &hrsc LCTRL D  &hrsc LSHIFT F  &lt_tp 2 G  &lt_tp 5 H     &hrsc RSHIFT J  &hrsc RCTRL K    &hmr RALT L  &hmr RGUI SEMI
-&ds_z 0 Z    &sel_x LCLK X  &sel_x MCLK C  &sel_x RCLK V   &lt_tp 4 B  &lt_tp 6 N     &kp M           &kp COMMA        &kp DOT      &kp FSLH
-                            &kp ESCAPE     &td_spc         &kp DEL     &kp BACKSPACE  &td_spc         &kp PRINTSCREEN
-            >;
-
-            sensor-bindings = <&enc_mac_cycle &inc_dec_kp LG(MINUS) LG(EQUAL)>;
+            sensor-bindings =
+                <&enc_win_cycle>,
+                <&inc_dec_kp LC(MINUS) LC(EQUAL)>;
         };
 
         nav_layer {
@@ -371,10 +374,10 @@
         hardware_layer {
             display-name = "HWARE";
             bindings = <
-&bt BT_SEL 0    &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3    &trans  &trans  &trans  &trans  &trans  &trans
-&bt BT_SEL 4    &none         &bt BT_PRV    &bt BT_NXT      &trans  &trans  &trans  &trans  &trans  &trans
-&studio_unlock  &none         &bt BT_CLR    &bt BT_CLR_ALL  &trans  &trans  &trans  &trans  &trans  &trans
-                              &trans        &trans          &trans  &trans  &trans  &trans
+&bt BT_SEL 0    &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3    &trans  &trans  &out OUT_BLE  &out OUT_USB  &out OUT_TOG  &trans
+&bt BT_SEL 4    &none         &bt BT_PRV    &bt BT_NXT      &trans  &trans  &trans        &trans        &trans        &trans
+&studio_unlock  &none         &bt BT_CLR    &bt BT_CLR_ALL  &trans  &trans  &tog 1        &trans        &trans        &trans
+                              &trans        &trans          &trans  &trans  &trans        &trans
             >;
 
             sensor-bindings = <&enc_ptr_spd &enc_scrl_spd>;
