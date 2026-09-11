@@ -14,12 +14,14 @@
 
 // ─── Layer indices ────────────────────────────────────────────────────────────
 
-#define WIN   0   // Base – WIN variant (Ctrl=F/J, GUI=D/K)
-#define MAC   1   // Base – QWERTY, GACS home row mods (Mac: Ctrl=D/K, GUI=F/J)
-#define NAV   2   // Navigation / arrows  (hold left inner thumb)
-#define NUM   3   // Numbers / F-keys     (hold right inner thumb)
-#define SYM   4   // Symbols              (tri-layer: NAV+NUM)
-#define MOUSE 5   // Mouse / trackpad     (toggle)
+#define WIN    0   // Base – WIN variant (Ctrl=F/J, GUI=D/K)
+#define MAC    1   // Base – QWERTY, GACS home row mods (Mac: Ctrl=D/K, GUI=F/J)
+#define ENCTOG 2   // Encoder-alternate (all-trans, sensor-bindings only)
+#define NAV    3   // Navigation / arrows  (hold left inner thumb)
+#define NUM    4   // Numbers / F-keys     (hold right inner thumb)
+#define SYM    5   // Symbols              (tri-layer: NAV+NUM)
+#define MOUSE  6   // Mouse / trackpad     (toggle)
+#define HWARE  7   // Hardware / BT / output
 
 // ─── Pointing speed constants ─────────────────────────────────────────────────
 
@@ -176,6 +178,30 @@
             bindings = <&kp LG(LS(GRAVE))>, <&kp LG(GRAVE)>;
         };
 
+        // ─── Encoder: plain Tab cycle (used with Alt-hold encoder press) ──────
+
+        enc_tab_cycle: encoder_tab_cycle {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&kp LS(TAB)>, <&kp TAB>;
+        };
+
+        // ─── Encoder: horizontal scroll ───────────────────────────────────────
+
+        enc_scroll_h: encoder_scroll_horizontal {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&msc SCRL_LEFT>, <&msc SCRL_RIGHT>;
+        };
+
+        // ─── Encoder: vertical scroll ─────────────────────────────────────────
+
+        enc_scroll_v: encoder_scroll_vertical {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
+        };
+
         hml: hml {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -258,10 +284,17 @@
         // ── Hardware layer toggle (inner thumbs: DELETE + BACKSPACE) ──────────
 
         combo_hw_toggle {
-            bindings = <&tog 6>;
+            bindings = <&tog HWARE>;
             key-positions = <32 33>;
             timeout-ms = <50>;
-            layers = <0 6 1>;
+            layers = <WIN MAC ENCTOG HWARE>;
+        };
+
+        combo_enc_toggle {
+            bindings = <&tog ENCTOG>;
+            key-positions = <31 34>;
+            timeout-ms = <50>;
+            layers = <WIN MAC ENCTOG>;
         };
     };
 
@@ -279,11 +312,11 @@
             bindings = <
 &kp Q        &kp W        &kp E               &kp R          &kp T       &kp Y       &kp U          &kp I                &kp O            &kp P
 &hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D  &hrsc LCTRL F  &kp G       &kp H       &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
-&ds_kp 0 Z   &lt_tp 4 X   &lt_tp 3 C          &lt_tp 2 V     &lt_tp 5 B  &lt_tp 5 N  &lt_tp 2 M     &lt_tp 3 COMMA       &lt_tp 4 PERIOD  &ds_kp 0 SLASH
-                          &kp PRINTSCREEN     &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp ESCAPE
+&ds_kp 0 Z   &lt_tp SYM X   &lt_tp NUM C          &lt_tp NAV V     &lt_tp MOUSE B  &lt_tp MOUSE N  &lt_tp NAV M     &lt_tp NUM COMMA       &lt_tp SYM PERIOD  &ds_kp 0 SLASH
+                          &hml LALT PRINTSCREEN  &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp ESCAPE
             >;
 
-            sensor-bindings = <&enc_win_cycle &inc_dec_kp LC(MINUS) LC(EQUAL)>;
+            sensor-bindings = <&enc_scroll_h &enc_scroll_v>;
         };
 
         win_alt_layer {
@@ -291,13 +324,30 @@
             bindings = <
 &kp Q        &kp W        &kp E               &kp R          &kp T       &kp Y          &kp U          &kp I                &kp O            &kp P
 &hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D  &hrsc LCTRL F  &kp G       &kp H          &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
-&ds_kp 0 Z   &lt_tp 4 X   &lt_tp 3 C          &lt_tp 2 V     &lt_tp 5 B  &lt_tp 5 N     &lt_tp 2 M     &lt_tp 3 COMMA       &lt_tp 4 PERIOD  &ds_kp 0 SLASH
-                          &kp PRINTSCREEN     &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp ESCAPE
+&ds_kp 0 Z   &lt_tp SYM X   &lt_tp NUM C          &lt_tp NAV V     &lt_tp MOUSE B  &lt_tp MOUSE N     &lt_tp NAV M     &lt_tp NUM COMMA       &lt_tp SYM PERIOD  &ds_kp 0 SLASH
+                          &hml LALT PRINTSCREEN  &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp ESCAPE
             >;
 
-            sensor-bindings =
-                <&enc_win_cycle>,
-                <&inc_dec_kp LC(MINUS) LC(EQUAL)>;
+            sensor-bindings = <&enc_scroll_h &enc_scroll_v>;
+        };
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Layer 2: ENCTOG – Encoder alternate mode
+        // All keys transparent (see-through to base WIN/WINALT).
+        // Only sensor-bindings change: left=Alt+Tab, right=zoom.
+        // Toggled via inner thumb combo (pos 31+34).
+        // ─────────────────────────────────────────────────────────────────────
+
+        enc_alt_layer {
+            display-name = "ENCTOG";
+            bindings = <
+&trans  &trans  &trans               &trans   &trans    &trans  &trans   &trans               &trans   &trans
+&trans  &trans  &trans               &trans   &trans    &trans  &trans   &trans               &trans   &trans
+&trans  &trans  &trans               &trans   &trans    &trans  &trans   &trans               &trans   &trans
+                &hml LALT PRINTSCREEN  &trans   &trans    &trans  &trans   &trans
+            >;
+
+            sensor-bindings = <&enc_tab_cycle &inc_dec_kp LC(MINUS) LC(EQUAL)>;
         };
 
         nav_layer {

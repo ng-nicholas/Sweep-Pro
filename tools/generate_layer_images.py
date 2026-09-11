@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 REPO = Path(__file__).resolve().parent.parent
 KEYMAP = REPO / "config" / "sweep.keymap"
 LAYOUT = REPO / "config" / "sweep.json"
-ASSETS = REPO / "Keyboard Companion" / "assets"
+ASSETS = REPO / "images" / "keymap"
 
 # Render scale: pixels per 1u key unit.
 UNIT = 132
@@ -120,6 +120,8 @@ def binding_labels(binding: str):
         # <layer> <key>: tap=key, hold=layer
         return (kc(args[1]), f"L{args[0]}")
     if beh == "&ds_z":
+        return (kc(args[1]), "scrl")
+    if beh == "&ds_kp":
         return (kc(args[1]), "scrl")
     if beh == "&sel_x":
         return (kc(args[1]), kc(args[0]))
