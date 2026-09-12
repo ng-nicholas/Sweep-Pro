@@ -192,7 +192,7 @@
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_LEFT>, <&msc SCRL_RIGHT>;
-            tap-ms = <30>;
+            tap-ms = <100>;
         };
 
         // ─── Encoder: vertical scroll ─────────────────────────────────────────
@@ -201,7 +201,7 @@
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
-            tap-ms = <30>;
+            tap-ms = <100>;
         };
 
         hml: hml {
@@ -286,17 +286,17 @@
         // ── Hardware layer toggle (inner thumbs: DELETE + BACKSPACE) ──────────
 
         combo_hw_toggle {
-            bindings = <&tog HWARE>;
+            bindings = <&tog 7>;
             key-positions = <32 33>;
             timeout-ms = <50>;
-            layers = <WIN MAC ENCTOG HWARE>;
+            layers = <0 1 2 7>;
         };
 
         combo_enc_toggle {
-            bindings = <&tog ENCTOG>;
+            bindings = <&tog 2>;
             key-positions = <31 34>;
             timeout-ms = <50>;
-            layers = <WIN MAC ENCTOG>;
+            layers = <0 1 2>;
         };
     };
 
@@ -314,7 +314,7 @@
             bindings = <
 &kp Q        &kp W        &kp E                  &kp R          &kp T       &kp Y       &kp U          &kp I                &kp O            &kp P
 &hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H       &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
-&lt_tp MOUSE Z   &lt_tp NAV X   &lt_tp NUM C             &lt_tp SYM V     &ds_kp 0 B  &ds_kp 0 N  &lt_tp SYM M     &lt_tp NUM COMMA       &lt_tp NAV PERIOD  &lt_tp MOUSE SLASH
+&lt_tp 6 Z   &lt_tp 3 X   &lt_tp 4 C             &lt_tp 5 V     &ds_kp 0 B  &ds_kp 0 N  &lt_tp 5 M     &lt_tp 4 COMMA       &lt_tp 3 PERIOD  &lt_tp 6 SLASH
                           &hml LALT PRINTSCREEN  &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp ESCAPE
             >;
 
@@ -326,7 +326,7 @@
             bindings = <
 &kp Q        &kp W        &kp E                  &kp R          &kp T       &kp Y          &kp U          &kp I                &kp O            &kp P
 &hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H          &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
-&lt_tp MOUSE Z   &lt_tp NAV X   &lt_tp NUM C             &lt_tp SYM V     &ds_kp 0 B  &ds_kp 0 N     &lt_tp SYM M     &lt_tp NUM COMMA       &lt_tp NAV PERIOD  &lt_tp MOUSE SLASH
+&lt_tp 6 Z   &lt_tp 3 X   &lt_tp 4 C             &lt_tp 5 V     &ds_kp 0 B  &ds_kp 0 N     &lt_tp 5 M     &lt_tp 4 COMMA       &lt_tp 3 PERIOD  &lt_tp 6 SLASH
                           &hml LALT PRINTSCREEN  &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp ESCAPE
             >;
 
