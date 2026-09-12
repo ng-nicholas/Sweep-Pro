@@ -314,7 +314,7 @@
             bindings = <
 &kp Q        &kp W        &kp E                  &kp R          &kp T       &kp Y       &kp U          &kp I                &kp O            &kp P
 &hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H       &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
-&ds_kp 0 Z   &lt_tp SYM X   &lt_tp NUM C             &lt_tp NAV V     &lt_tp MOUSE B  &lt_tp MOUSE N  &lt_tp NAV M     &lt_tp NUM COMMA       &lt_tp SYM PERIOD  &ds_kp 0 SLASH
+&lt_tp MOUSE Z   &lt_tp NAV X   &lt_tp NUM C             &lt_tp SYM V     &ds_kp 0 B  &ds_kp 0 N  &lt_tp SYM M     &lt_tp NUM COMMA       &lt_tp NAV PERIOD  &lt_tp MOUSE SLASH
                           &hml LALT PRINTSCREEN  &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp ESCAPE
             >;
 
@@ -326,7 +326,7 @@
             bindings = <
 &kp Q        &kp W        &kp E                  &kp R          &kp T       &kp Y          &kp U          &kp I                &kp O            &kp P
 &hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H          &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
-&ds_kp 0 Z   &lt_tp SYM X   &lt_tp NUM C             &lt_tp NAV V     &lt_tp MOUSE B  &lt_tp MOUSE N     &lt_tp NAV M     &lt_tp NUM COMMA       &lt_tp SYM PERIOD  &ds_kp 0 SLASH
+&lt_tp MOUSE Z   &lt_tp NAV X   &lt_tp NUM C             &lt_tp SYM V     &ds_kp 0 B  &ds_kp 0 N     &lt_tp SYM M     &lt_tp NUM COMMA       &lt_tp NAV PERIOD  &lt_tp MOUSE SLASH
                           &hml LALT PRINTSCREEN  &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp ESCAPE
             >;
 
