@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 2500
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 20
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 120
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
@@ -183,7 +183,7 @@
         enc_tab_cycle: encoder_tab_cycle {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
-            bindings = <&kp LS(TAB)>, <&kp TAB>;
+            bindings = <&kp LA(LS(TAB))>, <&kp LA(TAB)>;
         };
 
         // ─── Encoder: horizontal scroll ───────────────────────────────────────
@@ -200,7 +200,7 @@
         enc_scroll_v: encoder_scroll_vertical {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
+            bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
             tap-ms = <100>;
         };
 
@@ -346,7 +346,7 @@
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &hml LALT PRINTSCREEN  &trans  &trans  &trans  &trans  &trans
+                &trans                 &trans  &trans  &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_tab_cycle &inc_dec_kp LC(MINUS) LC(EQUAL)>;
