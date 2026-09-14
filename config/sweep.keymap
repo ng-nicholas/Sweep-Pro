@@ -42,7 +42,7 @@
 &sensors {
     left_encoder { triggers-per-rotation = <15>; };
 
-    right_encoder { triggers-per-rotation = <45>; };
+    right_encoder { triggers-per-rotation = <15>; };
 };
 
 &glidepoint_listener { input-processors = <&pointer_processor 0 0 &drag_scroll_processor 1 6>; };
@@ -77,6 +77,36 @@
         min-percent = <10>;
         max-percent = <1000>;
         initial-speed-position = <50>;
+    };
+
+    // ─── Alt+Tab macros (hold Alt for overlay visibility) ────────────────────
+
+    macros {
+        macro_alt_tab_fwd: macro_alt_tab_fwd {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings
+                = <&macro_press &kp LALT>
+                , <&macro_tap &kp TAB>
+                , <&macro_wait_time 500>
+                , <&macro_release &kp LALT>
+                ;
+        };
+
+        macro_alt_tab_rev: macro_alt_tab_rev {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings
+                = <&macro_press &kp LALT>
+                , <&macro_tap &kp LS(TAB)>
+                , <&macro_wait_time 500>
+                , <&macro_release &kp LALT>
+                ;
+        };
     };
 
     behaviors {
@@ -183,7 +213,7 @@
         enc_tab_cycle: encoder_tab_cycle {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
-            bindings = <&kp LA(LS(TAB))>, <&kp LA(TAB)>;
+            bindings = <&macro_alt_tab_rev>, <&macro_alt_tab_fwd>;
         };
 
         // ─── Encoder: horizontal scroll ───────────────────────────────────────
