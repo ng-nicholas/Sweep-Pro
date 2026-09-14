@@ -80,34 +80,9 @@
     };
 
     // ─── Alt+Tab macros (hold Alt for overlay visibility) ────────────────────
+    // NOTE: macro_alt_tab_fwd/rev removed — replaced by swapper_alt behavior.
 
     macros {
-        macro_alt_tab_fwd: macro_alt_tab_fwd {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <50>;
-            tap-ms = <50>;
-            bindings
-                = <&macro_press &kp LALT>
-                , <&macro_tap &kp TAB>
-                , <&macro_wait_time 1000>
-                , <&macro_release &kp LALT>
-                ;
-        };
-
-        macro_alt_tab_rev: macro_alt_tab_rev {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <50>;
-            tap-ms = <50>;
-            bindings
-                = <&macro_press &kp LALT>
-                , <&macro_tap &kp LS(TAB)>
-                , <&macro_wait_time 1000>
-                , <&macro_release &kp LALT>
-                ;
-        };
-
         macro_zoom_in: macro_zoom_in {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -232,12 +207,30 @@
             bindings = <&kp LG(LS(GRAVE))>, <&kp LG(GRAVE)>;
         };
 
-        // ─── Encoder: plain Tab cycle (used with Alt-hold encoder press) ──────
+        // ─── Encoder: plain Tab (no modifier) — used with swapper_alt ────────
+        // CW = Tab (next window), CCW = Shift+Tab (previous window).
+        // Alt is held by the swapper_alt smart-toggle on pos 30; this encoder
+        // just sends the bare Tab/Shift+Tab into the held Alt to cycle windows.
 
-        enc_tab_cycle: encoder_tab_cycle {
+        enc_tab_plain: encoder_tab_plain {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
-            bindings = <&macro_alt_tab_rev>, <&macro_alt_tab_fwd>;
+            bindings = <&kp LS(TAB)>, <&kp TAB>;
+        };
+
+        // ─── Smart-toggle Alt+Tab swapper ─────────────────────────────────────
+        // First press: holds Alt + taps Tab (Windows switcher overlay appears).
+        // Subsequent presses: taps Tab only (Alt stays held; overlay stays open).
+        // Deactivation: any non-ignored key press, or layer exit — releases Alt.
+        // pos 30 = left encoder press (the key that activates this behavior),
+        // pos 31 = left inner thumb (DELETE — part of ENCTOG toggle combo),
+        // pos 34 = right inner thumb (BACKSPACE — part of ENCTOG toggle combo).
+
+        swapper_alt: swapper_alt {
+            compatible = "zmk,behavior-smart-toggle";
+            #binding-cells = <0>;
+            bindings = <&kp LALT>, <&kp TAB>;
+            ignored-key-positions = <30 31 34>;
         };
 
         // ─── Encoder: horizontal scroll ───────────────────────────────────────
@@ -408,10 +401,10 @@
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &trans                 &trans  &trans  &trans  &trans  &trans
+                &swapper_alt           &trans  &trans  &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&enc_tab_cycle &enc_zoom>;
+            sensor-bindings = <&enc_tab_plain &enc_zoom>;
         };
 
         nav_layer {
