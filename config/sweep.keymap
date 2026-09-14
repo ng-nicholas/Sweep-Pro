@@ -111,8 +111,8 @@
         macro_zoom_in: macro_zoom_in {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <10>;
-            tap-ms = <100>;
+            wait-ms = <30>;
+            tap-ms = <50>;
             bindings
                 = <&macro_press &kp LCTRL>
                 , <&macro_tap &msc SCRL_UP>
@@ -123,8 +123,8 @@
         macro_zoom_out: macro_zoom_out {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <10>;
-            tap-ms = <100>;
+            wait-ms = <30>;
+            tap-ms = <50>;
             bindings
                 = <&macro_press &kp LCTRL>
                 , <&macro_tap &msc SCRL_DOWN>
@@ -246,7 +246,7 @@
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_LEFT>, <&msc SCRL_RIGHT>;
-            tap-ms = <100>;
+            tap-ms = <10>;
         };
 
         // ─── Encoder: vertical scroll ─────────────────────────────────────────
