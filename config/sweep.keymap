@@ -42,7 +42,7 @@
 &sensors {
     left_encoder { triggers-per-rotation = <15>; };
 
-    right_encoder { triggers-per-rotation = <15>; };
+    right_encoder { triggers-per-rotation = <45>; };
 };
 
 &glidepoint_listener { input-processors = <&pointer_processor 0 0 &drag_scroll_processor 1 6>; };
