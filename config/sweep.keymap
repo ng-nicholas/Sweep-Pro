@@ -79,9 +79,6 @@
         initial-speed-position = <50>;
     };
 
-    // ─── Alt+Tab macros (hold Alt for overlay visibility) ────────────────────
-    // NOTE: macro_alt_tab_fwd/rev removed — replaced by swapper_alt behavior.
-
     macros {
         macro_zoom_in: macro_zoom_in {
             compatible = "zmk,behavior-macro";
@@ -207,30 +204,15 @@
             bindings = <&kp LG(LS(GRAVE))>, <&kp LG(GRAVE)>;
         };
 
-        // ─── Encoder: plain Tab (no modifier) — used with swapper_alt ────────
-        // CW = Tab (next window), CCW = Shift+Tab (previous window).
-        // Alt is held by the swapper_alt smart-toggle on pos 30; this encoder
-        // just sends the bare Tab/Shift+Tab into the held Alt to cycle windows.
+        // ─── Encoder: plain Tab (no modifier) — used with &kt LALT on pos 30 ──
+        // CCW = Shift+Tab (previous window), CW = Tab (next window).
+        // Alt is latched via &kt LALT on the encoder press (pos 30); this encoder
+        // sends bare Tab/Shift+Tab into the latched Alt to cycle the switcher overlay.
 
         enc_tab_plain: encoder_tab_plain {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
             bindings = <&kp LS(TAB)>, <&kp TAB>;
-        };
-
-        // ─── Smart-toggle Alt+Tab swapper ─────────────────────────────────────
-        // First press: holds Alt + taps Tab (Windows switcher overlay appears).
-        // Subsequent presses: taps Tab only (Alt stays held; overlay stays open).
-        // Deactivation: any non-ignored key press, or layer exit — releases Alt.
-        // pos 30 = left encoder press (the key that activates this behavior),
-        // pos 31 = left inner thumb (DELETE — part of ENCTOG toggle combo),
-        // pos 34 = right inner thumb (BACKSPACE — part of ENCTOG toggle combo).
-
-        swapper_alt: swapper_alt {
-            compatible = "zmk,behavior-smart-toggle";
-            #binding-cells = <0>;
-            bindings = <&kp LALT>, <&kp TAB>;
-            ignored-key-positions = <30 31 34>;
         };
 
         // ─── Encoder: horizontal scroll ───────────────────────────────────────
@@ -443,7 +425,7 @@
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &swapper_alt           &trans  &trans  &trans  &trans  &trans
+                &kt LALT               &trans  &trans  &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_tab_plain &enc_zoom>;
