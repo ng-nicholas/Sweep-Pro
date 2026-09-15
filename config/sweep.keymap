@@ -330,6 +330,20 @@
             time-to-max-speed-ms = <40>;
             delay-ms = <0>;
         };
+
+        // ─── Win sticky-key (combo trigger) ──────────────────────────────────
+        // Fires LGUI immediately; awaits a chord key for up to 5 s.
+        // - 2nd key pressed       → Win+key chord, LGUI releases (quick-release)
+        // - Escape pressed        → Win+Esc (no-op on Windows), effectively cancel
+        // - 5 s timeout, no key   → LGUI releases alone → Start menu opens
+
+        sk_win: sk_win {
+            compatible = "zmk,behavior-sticky-key";
+            #binding-cells = <1>;
+            release-after-ms = <5000>;
+            bindings = <&kp>;
+            quick-release;
+        };
     };
 
     // ─── Combos ───────────────────────────────────────────────────────────────
@@ -360,6 +374,17 @@
             timeout-ms = <50>;
             layers = <0 1 2>;
         };
+
+        // ── Win sticky-key combo (both pinkies: A + ;) ────────────────────────
+        // Activates sk_win LGUI: hold for chord (Win+key), Esc to cancel,
+        // or let the 5 s timeout expire to open Start menu.
+
+        combo_oneshot_gui {
+            bindings = <&sk_win LGUI>;
+            key-positions = <10 19>;
+            timeout-ms = <50>;
+            layers = <0 1>;
+        };
     };
 
     keymap {
@@ -375,7 +400,7 @@
             display-name = "BASE";
             bindings = <
 &kp Q        &kp W        &kp E                  &kp R          &kp T       &kp Y       &kp U          &kp I                &kp O            &kp P
-&hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H       &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
+&kp A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H       &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &kp SEMI
 &lt_tp 6 Z   &lt_tp 3 X   &lt_tp 4 C             &lt_tp 5 V     &ds_kp 0 B  &ds_kp 0 N  &lt_tp 5 M     &lt_tp 4 COMMA       &lt_tp 3 PERIOD  &lt_tp 6 SLASH
                           &hml LALT PRINTSCREEN  &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp ESCAPE
             >;
@@ -387,7 +412,7 @@
             display-name = "BASEALT";
             bindings = <
 &kp Q        &kp W        &kp E                  &kp R          &kp T       &kp Y          &kp U          &kp I                &kp O            &kp P
-&hml LGUI A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H          &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &hmr RGUI SEMI
+&kp A  &hml LALT S  &hrsc LEFT_SHIFT D     &hrsc LCTRL F  &kp G       &kp H          &hrsc RCTRL J  &hrsc RIGHT_SHIFT K  &hmr RALT L      &kp SEMI
 &lt_tp 6 Z   &lt_tp 3 X   &lt_tp 4 C             &lt_tp 5 V     &ds_kp 0 B  &ds_kp 0 N     &lt_tp 5 M     &lt_tp 4 COMMA       &lt_tp 3 PERIOD  &lt_tp 6 SLASH
                           &hml LALT PRINTSCREEN  &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp ESCAPE
             >;
