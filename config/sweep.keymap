@@ -55,13 +55,13 @@
         #input-processor-cells = <2>;
         track-remainders;
         pointer-curve = "adaptive";
-        pointer-curve-deadzone = <1>;
+        pointer-curve-deadzone = <0>;
         pointer-curve-accel-multiplier = <1>;
-        pointer-curve-accel-divisor = <16>;
-        pointer-curve-max-delta = <90>;
+        pointer-curve-accel-divisor = <24>;
+        pointer-curve-max-delta = <64>;
         one-x-multiplier = <1>;
         one-x-divisor = <1>;
-        min-percent = <10>;
+        min-percent = <25>;
         max-percent = <400>;
         initial-speed-position = <50>;
     };
@@ -384,6 +384,23 @@
             key-positions = <10 19>;
             timeout-ms = <50>;
             layers = <0 1>;
+        };
+
+        // ── Mouse click combos (left-hand bottom row, active on base + mouse layers) ─
+        // X+C = right-click (pos 21+22), C+V = middle-click (pos 22+23)
+
+        combo_rclk {
+            bindings = <&mkp RCLK>;
+            key-positions = <21 22>;
+            timeout-ms = <50>;
+            layers = <0 1 6>;
+        };
+
+        combo_mclk {
+            bindings = <&mkp MCLK>;
+            key-positions = <22 23>;
+            timeout-ms = <50>;
+            layers = <0 1 6>;
         };
     };
 
