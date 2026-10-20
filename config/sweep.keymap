@@ -204,15 +204,17 @@
             bindings = <&kp LG(LS(GRAVE))>, <&kp LG(GRAVE)>;
         };
 
-        // ─── Encoder: plain Tab (no modifier) — used with &kt LALT on pos 30 ──
-        // CCW = Shift+Tab (previous window), CW = Tab (next window).
-        // Alt is latched via &kt LALT on the encoder press (pos 30); this encoder
-        // sends bare Tab/Shift+Tab into the latched Alt to cycle the switcher overlay.
+        // ─── Encoder: Alt+Tab swapper (rotation-driven) ─────────────────────
+        // CCW = swapper_alt_rev (Shift+Tab), CW = swapper_alt (Tab). The smart-
+        // toggle holds Alt across detents so the Windows switcher overlay stays
+        // open while cycling; it releases Alt on any non-ignored key or on
+        // ENCTOG layer exit. Encoder press (pos 30) is ignored so it can send
+        // Win+Tab without closing the overlay.
 
-        enc_tab_plain: encoder_tab_plain {
+        enc_swapper: encoder_swapper {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
-            bindings = <&kp LS(TAB)>, <&kp TAB>;
+            bindings = <&swapper_alt_rev>, <&swapper_alt>;
         };
 
         // ─── Encoder: horizontal scroll ───────────────────────────────────────
@@ -305,6 +307,56 @@
             time-to-max-speed-ms = <40>;
             delay-ms = <0>;
         };
+
+        // ─── Win sticky-key (combo trigger) ──────────────────────────────────
+        // Fires LGUI immediately; awaits a chord key for up to 5 s.
+        // - 2nd key pressed       → Win+key chord, LGUI releases (quick-release)
+        // - Escape pressed        → Win+Esc (no-op on Windows), effectively cancel
+        // - 5 s timeout, no key   → LGUI releases alone → Start menu opens
+
+        sk_win: sk_win {
+            compatible = "zmk,behavior-sticky-key";
+            #binding-cells = <1>;
+            release-after-ms = <5000>;
+            bindings = <&kp>;
+            quick-release;
+        };
+
+        // ─── Hardware-layer sticky (combo trigger) ───────────────────────────
+        // Temporarily enables the HWARE layer instead of toggling it, mirroring
+        // the Win sticky-key timing (5 s). Releases on the next key press or
+        // after 5 s if unused — prevents accidental persistent hardware changes.
+
+        sl_hw: sl_hw {
+            compatible = "zmk,behavior-sticky-key";
+            #binding-cells = <0>;
+            release-after-ms = <5000>;
+            bindings = <&mo HWARE>;
+            ignore-modifiers;
+        };
+
+        // ─── Smart-toggle Alt+Tab swapper (CW) ───────────────────────────────
+        // First invocation: holds Alt + taps Tab (Windows switcher overlay).
+        // Subsequent invocations: taps Tab only (Alt stays held → overlay stays).
+        // Deactivation: any non-ignored key press, or ENCTOG layer exit → Alt off.
+        // Ignored positions: 30 (encoder press = Win+Tab), 31/34 (ENCTOG combo).
+
+        swapper_alt: swapper_alt {
+            compatible = "zmk,behavior-smart-toggle";
+            #binding-cells = <0>;
+            bindings = <&kp LALT>, <&kp TAB>;
+            ignored-key-positions = <30 31 34>;
+        };
+
+        // ─── Smart-toggle Alt+Tab swapper (CCW / reverse) ────────────────────
+        // Same Alt-hold session but cycles backwards with Shift+Tab.
+
+        swapper_alt_rev: swapper_alt_rev {
+            compatible = "zmk,behavior-smart-toggle";
+            #binding-cells = <0>;
+            bindings = <&kp LALT>, <&kp LS(TAB)>;
+            ignored-key-positions = <30 31 34>;
+        };
     };
 
     // ─── Combos ───────────────────────────────────────────────────────────────
@@ -320,13 +372,15 @@
         // ── Mouse button combos (left hand, active on base + mouse layers) ────
         // ── Symbol combos (right hand, active on base layers) ─────────────────
         // ── Quick Escape combo (WE, left hand) ───────────────────────────────
-        // ── Hardware layer toggle (inner thumbs: DELETE + BACKSPACE) ──────────
+        // ── Hardware layer momentary (inner thumbs: DELETE + BACKSPACE) ──────
+        // Temporarily enables HWARE (sticky, 5 s) instead of toggling it, to
+        // avoid forgetting the layer is active and causing accidental changes.
 
         combo_hw_toggle {
-            bindings = <&tog 7>;
+            bindings = <&sl_hw>;
             key-positions = <32 33>;
             timeout-ms = <50>;
-            layers = <0 1 2 7>;
+            layers = <0 1 2>;
         };
 
         combo_enc_toggle {
@@ -383,7 +437,7 @@
                           &hml LALT PRINTSCREEN  &kp DELETE     &td_spc     &td_spc     &kp BACKSPACE  &kp ESCAPE
             >;
 
-            sensor-bindings = <&enc_scroll_h &enc_scroll_v>;
+            sensor-bindings = <&enc_scroll_v &enc_scroll_h>;
         };
 
         base_alt_layer {
@@ -395,13 +449,14 @@
                           &hml LALT PRINTSCREEN  &td_spc        &kp DELETE  &kp BACKSPACE  &td_spc        &kp ESCAPE
             >;
 
-            sensor-bindings = <&enc_scroll_h &enc_scroll_v>;
+            sensor-bindings = <&enc_scroll_v &enc_scroll_h>;
         };
 
         // ─────────────────────────────────────────────────────────────────────
         // Layer 2: ENCTOG – Encoder alternate mode
         // All keys transparent (see-through to base WIN/WINALT).
-        // Only sensor-bindings change: left=Alt+Tab, right=zoom.
+        // Only sensor-bindings change: left=Alt+Tab swapper, right=zoom.
+        // Encoder press (pos 30) = Win+Tab (Task View / workspace selector).
         // Toggled via inner thumb combo (pos 31+34).
         // ─────────────────────────────────────────────────────────────────────
 
@@ -411,10 +466,10 @@
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans                 &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &kt LALT               &trans  &trans  &trans  &trans  &trans
+                &kp LG(TAB)            &trans  &trans  &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&enc_tab_plain &enc_zoom>;
+            sensor-bindings = <&enc_swapper &enc_zoom>;
         };
 
         nav_layer {

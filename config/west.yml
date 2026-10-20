@@ -10,6 +10,8 @@ manifest:
     url-base: https://github.com/maatthc
   - name: ng-nicholas
     url-base: https://github.com/ng-nicholas
+  - name: caksoylar
+    url-base: https://github.com/caksoylar
   projects:
   - name: zmk
     remote: zmkfirmware
@@ -28,5 +30,8 @@ manifest:
   - name: zmk-feature-appcompanion
     remote: ng-nicholas
     revision: be86962c9e8f59a8d5ac25ac763ba4fca0db2cf5
+  - name: zmk-smart-toggle
+    remote: caksoylar
+    revision: main
   self:
     path: config
