@@ -329,9 +329,9 @@
 
         sl_hw: sl_hw {
             compatible = "zmk,behavior-sticky-key";
-            #binding-cells = <0>;
+            #binding-cells = <1>;
             release-after-ms = <5000>;
-            bindings = <&mo HWARE>;
+            bindings = <&mo>;
             ignore-modifiers;
         };
 
@@ -377,7 +377,7 @@
         // avoid forgetting the layer is active and causing accidental changes.
 
         combo_hw_toggle {
-            bindings = <&sl_hw>;
+            bindings = <&sl_hw HWARE>;
             key-positions = <32 33>;
             timeout-ms = <50>;
             layers = <0 1 2>;
