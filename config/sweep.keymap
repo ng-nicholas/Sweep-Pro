@@ -323,14 +323,14 @@
         };
 
         // ─── Hardware-layer sticky (combo trigger) ───────────────────────────
-        // Temporarily enables the HWARE layer instead of toggling it, mirroring
-        // the Win sticky-key timing (5 s). Releases on the next key press or
-        // after 5 s if unused — prevents accidental persistent hardware changes.
+        // Temporarily enables the HWARE layer instead of toggling it. Releases
+        // on the next key press or after 3 s if unused — prevents accidental
+        // persistent hardware changes.
 
         sl_hw: sl_hw {
             compatible = "zmk,behavior-sticky-key";
             #binding-cells = <1>;
-            release-after-ms = <5000>;
+            release-after-ms = <3000>;
             bindings = <&mo>;
             ignore-modifiers;
         };
