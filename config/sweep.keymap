@@ -103,6 +103,151 @@
                 , <&macro_release &kp LCTRL>
                 ;
         };
+
+        // ─── HWARE self-exit macros ───────────────────────────────────────────
+        // Each macro performs its hardware action, then taps &tog HWARE to turn
+        // the HWARE toggle back off. This guarantees the layer is dismissed even
+        // for non-keycode behaviors (&bt/&out/&tog/&studio_unlock), which ZMK's
+        // sticky-key/auto-layer could not detect (they only see HID keycodes).
+
+        hw_sel0: hw_sel0 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_SEL 0>, <&macro_tap &tog HWARE>;
+        };
+        hw_sel1: hw_sel1 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_SEL 1>, <&macro_tap &tog HWARE>;
+        };
+        hw_sel2: hw_sel2 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_SEL 2>, <&macro_tap &tog HWARE>;
+        };
+        hw_sel3: hw_sel3 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_SEL 3>, <&macro_tap &tog HWARE>;
+        };
+        hw_sel4: hw_sel4 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_SEL 4>, <&macro_tap &tog HWARE>;
+        };
+
+        hw_disc0: hw_disc0 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_DISC 0>, <&macro_tap &tog HWARE>;
+        };
+        hw_disc1: hw_disc1 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_DISC 1>, <&macro_tap &tog HWARE>;
+        };
+        hw_disc2: hw_disc2 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_DISC 2>, <&macro_tap &tog HWARE>;
+        };
+        hw_disc3: hw_disc3 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_DISC 3>, <&macro_tap &tog HWARE>;
+        };
+        hw_disc4: hw_disc4 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_DISC 4>, <&macro_tap &tog HWARE>;
+        };
+
+        hw_prv: hw_prv {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_PRV>, <&macro_tap &tog HWARE>;
+        };
+        hw_nxt: hw_nxt {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_NXT>, <&macro_tap &tog HWARE>;
+        };
+        hw_clr: hw_clr {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_CLR>, <&macro_tap &tog HWARE>;
+        };
+        hw_clrall: hw_clrall {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &bt BT_CLR_ALL>, <&macro_tap &tog HWARE>;
+        };
+
+        hw_ble: hw_ble {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &out OUT_BLE>, <&macro_tap &tog HWARE>;
+        };
+        hw_usb: hw_usb {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &out OUT_USB>, <&macro_tap &tog HWARE>;
+        };
+        hw_togout: hw_togout {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &out OUT_TOG>, <&macro_tap &tog HWARE>;
+        };
+
+        hw_tog1: hw_tog1 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &tog 1>, <&macro_tap &tog HWARE>;
+        };
+
+        hw_unlock: hw_unlock {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap &studio_unlock>, <&macro_tap &tog HWARE>;
+        };
     };
 
     behaviors {
@@ -323,17 +468,10 @@
         };
 
         // ─── Hardware-layer sticky (combo trigger) ───────────────────────────
-        // Temporarily enables the HWARE layer instead of toggling it. Releases
-        // on the next key press or after 3 s if unused — prevents accidental
-        // persistent hardware changes.
-
-        sl_hw: sl_hw {
-            compatible = "zmk,behavior-sticky-key";
-            #binding-cells = <1>;
-            release-after-ms = <3000>;
-            bindings = <&mo>;
-            ignore-modifiers;
-        };
+        // Removed sl_hw: ZMK sticky-key only reacts to HID keycode presses, and
+        // the HWARE layer has only &bt/&out/&tog/&studio_unlock keys (no keycode
+        // events), so it never released on those presses. HWARE is now a plain
+        // &tog toggle; each HWARE key self-exits the layer (see macros below).
 
         // ─── Smart-toggle Alt+Tab swapper (CW) ───────────────────────────────
         // First invocation: holds Alt + taps Tab (Windows switcher overlay).
@@ -372,15 +510,16 @@
         // ── Mouse button combos (left hand, active on base + mouse layers) ────
         // ── Symbol combos (right hand, active on base layers) ─────────────────
         // ── Quick Escape combo (WE, left hand) ───────────────────────────────
-        // ── Hardware layer momentary (inner thumbs: DELETE + BACKSPACE) ──────
-        // Temporarily enables HWARE (sticky, 5 s) instead of toggling it, to
-        // avoid forgetting the layer is active and causing accidental changes.
+        // ── Hardware layer toggle (inner thumbs: DELETE + BACKSPACE) ─────────
+        // Plain &tog HWARE. Each HWARE key self-exits the layer after its
+        // action, so there is no "stuck layer" problem; the combo can also be
+        // pressed again (active on layer 7) to dismiss HWARE manually.
 
         combo_hw_toggle {
-            bindings = <&sl_hw HWARE>;
+            bindings = <&tog HWARE>;
             key-positions = <32 33>;
             timeout-ms = <50>;
-            layers = <0 1 2>;
+            layers = <0 1 2 7>;
         };
 
         combo_enc_toggle {
@@ -521,10 +660,10 @@
         hardware_layer {
             display-name = "HWARE";
             bindings = <
-&bt BT_SEL 0    &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &bt BT_DISC 4
-&bt BT_PRV      &bt BT_NXT    &none         &bt BT_CLR    &bt BT_CLR_ALL  &out OUT_BLE   &out OUT_USB   &out OUT_TOG   &none          &tog 1
-&studio_unlock  &none         &none         &none         &none           &none          &none          &none          &none          &studio_unlock
-                              &none         &none         &none           &none          &none          &none
+&hw_sel0    &hw_sel1  &hw_sel2  &hw_sel3  &hw_sel4    &hw_disc0  &hw_disc1  &hw_disc2   &hw_disc3  &hw_disc4
+&hw_prv     &hw_nxt   &none     &hw_clr   &hw_clrall  &hw_ble    &hw_usb    &hw_togout  &none      &hw_tog1
+&hw_unlock  &none     &none     &none     &none       &none      &none      &none       &none      &hw_unlock
+                      &none     &none     &none       &none      &none      &none
             >;
 
             sensor-bindings = <&enc_ptr_spd &enc_scrl_spd>;
